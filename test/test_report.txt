@@ -1,0 +1,16 @@
+test_get_im_success (im_test.GMIMTest.test_get_im_success) ... ok
+test_read_from_kik_success (io_test.GroundMotionTest.test_read_from_kik_success) ... ok
+test_read_from_peer_success (io_test.GroundMotionTest.test_read_from_peer_success) ... ok
+test_read_from_single_success (io_test.GroundMotionTest.test_read_from_single_success) ... ok
+test_save_to_single_success (io_test.GroundMotionTest.test_save_to_single_success) ... ok
+test_butter_worth_bandpath_filter_success (process_test.ProcessTest.test_butter_worth_bandpath_filter_success) ... ok
+test_downsample_success (process_test.ProcessTest.test_downsample_success) ... ok
+test_fourier_success (process_test.ProcessTest.test_fourier_success) ... ok
+test_gm_data_fill_success (process_test.ProcessTest.test_gm_data_fill_success) ... ok
+test_length_normalize_success (process_test.ProcessTest.test_length_normalize_success) ... ok
+test_get_spectrum_success (spectrum_test.SpectrumTest.test_get_spectrum_success) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 28.401s
+
+OK
