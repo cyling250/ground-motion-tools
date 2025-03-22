@@ -6,7 +6,7 @@ Some utils for processing ground motion.
 """
 import numpy as np
 from scipy import signal
-from .enums import GMDataEnum
+from enums import GMDataEnum
 
 
 def gm_data_fill(gm_data: np.ndarray,
@@ -153,3 +153,21 @@ def length_normalize(gm_data: np.ndarray[np.float64], normal_length: int):
         forward_length = int(pga_loca * cut_rate)
         res = gm_data[pga_loca - forward_length:normal_length - forward_length + pga_loca]
         return res
+
+
+def pga_adjust(ground_motion_data: np.ndarray, target_pga):
+    """
+    按照目标PGA对目标地震波进行调幅。
+    Args:
+        ground_motion_data: 地震波
+        target_pga: 目标地震波PGA
+
+    Returns:
+
+    """
+    if ground_motion_data.ndim == 1:
+        return ground_motion_data * target_pga / np.abs(ground_motion_data).max()
+    elif ground_motion_data.ndim == 2:
+        return ground_motion_data / np.abs(ground_motion_data).max(axis=1).reshape(-1, 1) * target_pga
+    else:
+        raise ValueError("ndim of parameter 'ground_motion_data' must be 1 or 2.")

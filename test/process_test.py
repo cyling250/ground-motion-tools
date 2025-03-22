@@ -3,7 +3,12 @@
 # @Author:  RichardoGu
 import unittest
 
-from ground_motion_tools import read_from_kik, fourier, gm_data_fill, butter_worth_filter, down_sample, length_normalize
+import numpy as np
+from ground_motion_tools import read_from_kik
+from ground_motion_tools.process import (
+    fourier, gm_data_fill, butter_worth_filter, down_sample, length_normalize,
+    pga_adjust
+)
 
 
 class ProcessTest(unittest.TestCase):
@@ -36,3 +41,16 @@ class ProcessTest(unittest.TestCase):
         self.assertEqual(normalized_wave.shape[0], 1000)
         normalized_wave = length_normalize(ProcessTest.gm_data, 3000)
         self.assertEqual(normalized_wave.shape[0], 3000)
+
+    def test_pga_adjust_success(self):
+        gm_data_many = np.zeros((100, ProcessTest.gm_data.shape[0]))
+        for i in range(100):
+            gm_data_many[i, :] = ProcessTest.gm_data
+
+        adjusted_wave = pga_adjust(ProcessTest.gm_data, 2.2)
+        self.assertEqual(np.abs(adjusted_wave).max(), 2.2)
+        adjusted_wave = pga_adjust(gm_data_many, 2.2)
+        self.assertEqual(
+            np.abs(adjusted_wave).max(axis=1).all(),
+            np.array([2.2 for i in range(adjusted_wave.shape[0])]).all()
+        )
