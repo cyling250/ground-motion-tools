@@ -199,7 +199,7 @@ def match_discrete_periodic_point(
         target_spectrum_func: callable,
         target_spectrum_params: dict,
         periodic_point: np.ndarray[float] | list[float],
-        tremble: float | list | np.ndarray = 0.2,
+        tolerance: float | list | np.ndarray = 0.2,
         time_step: float = 0.02,
         damping_ratio: float = 0.05):
     """
@@ -207,18 +207,30 @@ def match_discrete_periodic_point(
     Args:
         ground_motion_data: Ground Motion data. [batch_size, seq_length]
         time_step: Time step.
-        periodic_point: Periodic point.
+        periodic_point: Periodic point need to be calculated.
         target_spectrum_func: Target Spectrum Calculation Function
         target_spectrum_params: Parameters for the calculation of the target spectrum.
         damping_ratio: Damping ratio
-        tremble: Permitted jitter deviation from the target spectrum.
+        tolerance: Permitted jitter deviation from the target spectrum.
+    Examples:
+        >>> data = "your ndarray wave data"
+        >>> idx = match_discrete_periodic_point(data,
+        >>>    design_spectrum_building,
+        >>>    {
+        >>>         "damping_ratio": 0.05,
+        >>>         "t_g": 0.35,
+        >>>         "alpha_max": 0.08 * 9.8
+        >>>     },
+        >>>     [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1, 1.2, 1.5, 1.6, 1.8, 2],
+        >>>     0.3
+        >>> )
     Returns: Array of matched seismic wave numbers.
     """
-    if type(tremble) == float:
-        tremble = np.array([tremble for i in range(len(periodic_point))])
+    if type(tolerance) == float:
+        tolerance = np.array([tolerance for i in range(len(periodic_point))])
 
-    if len(tremble) != len(periodic_point):
-        raise ValueError("Length of 'tremble' and 'periodic_point' must be equal.")
+    if len(tolerance) != len(periodic_point):
+        raise ValueError("Length of 'tolerance' and 'periodic_point' must be equal.")
 
     reserve_ground_motion_idx = np.arange(ground_motion_data.shape[0], dtype=int)
     for period_idx in range(len(periodic_point)):
@@ -226,14 +238,14 @@ def match_discrete_periodic_point(
 
         temp_ground_motion_data = ground_motion_data.take(reserve_ground_motion_idx, axis=0)
 
-        acc, _, _ = newmark_beta_single(
+        _, _, disp = newmark_beta_single(
             1, (2 * np.pi / periodic_point[period_idx]) ** 2,
             temp_ground_motion_data, time_step, damping_ratio
         )
-        acc = acc.max(axis=1)
+        acc = np.abs(disp).max(axis=1) * (2 * np.pi / periodic_point[period_idx]) ** 2
 
-        target_spectrum_value_lower = (1 - tremble[period_idx]) * target_spectrum_value
-        target_spectrum_value_upper = (1 + tremble[period_idx]) * target_spectrum_value
+        target_spectrum_value_lower = (1 - tolerance[period_idx]) * target_spectrum_value
+        target_spectrum_value_upper = (1 + tolerance[period_idx]) * target_spectrum_value
 
         temp_delete_idx = []
         for i in range(temp_ground_motion_data.shape[0]):

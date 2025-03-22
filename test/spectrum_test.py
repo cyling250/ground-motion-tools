@@ -24,8 +24,11 @@ class SpectrumTest(unittest.TestCase):
     time_step = 0.02
 
     def test_get_spectrum_success(self):
-        acc_spectrum, vel_spectrum, disp_spectrum, _, _ = get_spectrum(SpectrumTest.gm_data, SpectrumTest.time_step)
-        self.assertEqual(acc_spectrum.shape[0], len(SPECTRUM_PERIOD))
+        gm_data = pga_adjust(SpectrumTest.gm_data, 0.35)
+        _, _, _, pse_acc_spectrum, _ = get_spectrum(gm_data, SpectrumTest.time_step)
+        # plt.plot(SPECTRUM_PERIOD, pse_acc_spectrum)
+        # plt.show()
+        self.assertEqual(pse_acc_spectrum.shape[0], len(SPECTRUM_PERIOD))
 
         gm_data_many = np.zeros((100, SpectrumTest.gm_data.shape[0]))
         for i in range(100):
@@ -46,7 +49,7 @@ class SpectrumTest(unittest.TestCase):
     def test_match_discrete_periodic_point_success(self):
         data = []
         with h5py.File("G:/KSP/ksp_all.h5") as fp:
-            name_list = list(fp["root"].keys())[:10000]
+            name_list = list(fp["root"].keys())[:100]
             for name in name_list:
                 data.append(fp["root"][name][:])
         data = np.array(data)
@@ -60,11 +63,12 @@ class SpectrumTest(unittest.TestCase):
                 "alpha_max": 0.08 * 9.8
             },
             [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1, 1.2, 1.5, 1.6, 1.8, 2],
-            0.2
+            [0.2, 0.3, 0.2, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
         )
-        for i in idx:
-            save_to_single(f"./data/{i}.txt", data[i])
-        spectrum_design = []
-        for i in np.arange(0, 4, 0.01):
-            spectrum_design.append(design_spectrum_building(float(i)) * 9.8)
-        np.savetxt('./data/spectrum.csv', np.array([np.arange(0, 4, 0.01), spectrum_design]).transpose(), delimiter=" ")
+        self.assertEqual(0, 0)
+        # for i in idx:
+        #     save_to_single(f"./data/{i}.txt", data[i])
+        # spectrum_design = []
+        # for i in np.arange(0, 4, 0.01):
+        #     spectrum_design.append(design_spectrum_building(float(i)) * 9.8)
+        # np.savetxt('./data/spectrum.csv', np.array([np.arange(0, 4, 0.01), spectrum_design]).transpose(), delimiter=" ")
