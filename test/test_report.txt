@@ -8,9 +8,12 @@ test_downsample_success (process_test.ProcessTest.test_downsample_success) ... o
 test_fourier_success (process_test.ProcessTest.test_fourier_success) ... ok
 test_gm_data_fill_success (process_test.ProcessTest.test_gm_data_fill_success) ... ok
 test_length_normalize_success (process_test.ProcessTest.test_length_normalize_success) ... ok
+test_pga_adjust_success (process_test.ProcessTest.test_pga_adjust_success) ... ok
+test_design_spectrum_building_success (spectrum_test.SpectrumTest.test_design_spectrum_building_success) ... ok
 test_get_spectrum_success (spectrum_test.SpectrumTest.test_get_spectrum_success) ... ok
+test_match_discrete_periodic_point_success (spectrum_test.SpectrumTest.test_match_discrete_periodic_point_success) ... ok
 
 ----------------------------------------------------------------------
-Ran 11 tests in 28.401s
+Ran 14 tests in 29.272s
 
 OK

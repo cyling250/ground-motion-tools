@@ -8,10 +8,11 @@ import unittest
 
 import numpy as np
 
-from enums import GMIMEnum
-from ground_motion_tools import read_from_kik, down_sample, GMIntensityMeasures
+from ground_motion_tools.enums import GMIMEnum
+from ground_motion_tools import read_from_kik, GMIntensityMeasures
+from ground_motion_tools.process import down_sample
 
-GM_DATA, TIME_STEP = read_from_kik("../../../severest-fragility/ABSH010011140057.EW2")
+GM_DATA, TIME_STEP = read_from_kik("./data/ABSH010011140057.EW2")
 GM_DATA = down_sample(GM_DATA, TIME_STEP, 0.02)
 TIME_STEP = 0.02
 
