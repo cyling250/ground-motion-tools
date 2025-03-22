@@ -14,6 +14,6 @@ test_get_spectrum_success (spectrum_test.SpectrumTest.test_get_spectrum_success)
 test_match_discrete_periodic_point_success (spectrum_test.SpectrumTest.test_match_discrete_periodic_point_success) ... ok
 
 ----------------------------------------------------------------------
-Ran 14 tests in 29.272s
+Ran 14 tests in 28.956s
 
 OK

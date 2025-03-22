@@ -5,13 +5,14 @@
 import numpy as np
 
 
-def segmented_parsing(mass: float,
-                      stiffness: float,
-                      load: np.ndarray,
-                      time_step: float,
-                      damping_ratio: float = 0.05,
-                      disp_0: float = 0,
-                      vel_0: float = 0) -> (np.ndarray, np.ndarray, np.ndarray):
+def segmented_parsing(
+        mass: float,
+        stiffness: float,
+        load: np.ndarray,
+        time_step: float,
+        damping_ratio: float = 0.05,
+        disp_0: float = 0,
+        vel_0: float = 0) -> (np.ndarray, np.ndarray, np.ndarray):
     """
     This function is Segmented Parsing method, which is generally applicable
     for solving the dynamic response of single degree of freedom system.
@@ -80,8 +81,9 @@ def segmented_parsing(mass: float,
     # Start Iteration
     for i in range(seq_length - 1):
         disp[:, i + 1] = p_a * disp[:, i] + p_b * vel[:, i] + p_c * load[:, i] + p_d * load[:, i + 1]
-        vel[:, i + 1] = (p_a_prime * disp[:, i] +
-                         p_b_prime * vel[:, i] + p_c_prime * load[:, i] + p_d_prime * load[:, i + 1])
+        vel[:, i + 1] = (
+                p_a_prime * disp[:, i] +
+                p_b_prime * vel[:, i] + p_c_prime * load[:, i] + p_d_prime * load[:, i + 1])
         acc[:, i + 1] = -2 * damping_ratio * omega_n * vel[:, i + 1] - stiffness / mass * disp[:, i + 1]
 
     return acc, vel, disp
