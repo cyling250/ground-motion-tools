@@ -6,7 +6,7 @@ Some utils for processing ground motion.
 """
 import numpy as np
 from scipy import signal
-from .enums import GMDataEnum
+from enums import GMDataEnum
 
 
 def gm_data_fill(gm_data: np.ndarray,
