@@ -232,10 +232,11 @@ def match_discrete_periodic_point(
         )
         acc = acc.max(axis=1)
 
+        target_spectrum_value_lower = (1 - tremble[period_idx]) * target_spectrum_value
+        target_spectrum_value_upper = (1 + tremble[period_idx]) * target_spectrum_value
         for i in range(len(reservation_ground_motion_idx)):
-            if (1 - tremble[period_idx]) * target_spectrum_value > acc[i] or (
-                    1 + tremble[period_idx]) * target_spectrum_value < acc[i]:
-                reservation_ground_motion_idx.remove(i)
+            if target_spectrum_value_lower > acc[i] or target_spectrum_value_upper < acc[i]:
+                reservation_ground_motion_idx.remove(reservation_ground_motion_idx[i])
 
             if len(reservation_ground_motion_idx) == 0:
                 break
