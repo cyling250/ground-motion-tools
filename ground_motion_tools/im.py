@@ -5,10 +5,10 @@
 Intensity measures
 """
 import numpy as np
-from .process import gm_data_fill
-from .sbs_integration_linear import segmented_parsing
-from .spectrum import SPECTRUM_PERIOD, get_spectrum
-from .enums import GMIMEnum, GMDataEnum
+from process import gm_data_fill
+from sbs_integration_linear import segmented_parsing
+from spectrum import SPECTRUM_PERIOD, get_spectrum
+from enums import GMIMEnum, GMDataEnum
 
 IM_ADJUST_DICT = {
     GMIMEnum.PGA.name: {  # 按照PGA进行调幅的其余IM变化率

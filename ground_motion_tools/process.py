@@ -6,13 +6,12 @@ Some utils for processing ground motion.
 """
 import numpy as np
 from scipy import signal
-from .enums import GMDataEnum
+from enums import GMDataEnum
 
 
-def gm_data_fill(
-        gm_data: np.ndarray,
-        time_step: float = 0.02,
-        wave_type: GMDataEnum = GMDataEnum.ACC) -> (
+def gm_data_fill(gm_data: np.ndarray,
+                 time_step: float = 0.02,
+                 wave_type: GMDataEnum = GMDataEnum.ACC) -> (
         np.ndarray[np.float64], np.ndarray[np.float64], np.ndarray[np.float64]
 ):
     """
