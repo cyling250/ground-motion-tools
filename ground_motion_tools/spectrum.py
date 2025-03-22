@@ -201,8 +201,7 @@ def match_discrete_periodic_point(
         periodic_point: np.ndarray[float] | list[float],
         tremble: float | list | np.ndarray = 0.2,
         time_step: float = 0.02,
-        damping_ratio: float = 0.05,
-) -> list[int]:
+        damping_ratio: float = 0.05):
     """
     Discrete Periodic Point Matching.
     Args:
@@ -221,11 +220,12 @@ def match_discrete_periodic_point(
     if len(tremble) != len(periodic_point):
         raise ValueError("Length of 'tremble' and 'periodic_point' must be equal.")
 
-    reservation_ground_motion_idx = [i for i in range(ground_motion_data.shape[0])]
-
+    reserve_ground_motion_idx = np.arange(ground_motion_data.shape[0], dtype=int)
     for period_idx in range(len(periodic_point)):
         target_spectrum_value = target_spectrum_func(period=periodic_point[period_idx], **target_spectrum_params)
-        temp_ground_motion_data = ground_motion_data[reservation_ground_motion_idx]
+
+        temp_ground_motion_data = ground_motion_data.take(reserve_ground_motion_idx, axis=0)
+
         acc, _, _ = newmark_beta_single(
             1, (2 * np.pi / periodic_point[period_idx]) ** 2,
             temp_ground_motion_data, time_step, damping_ratio
@@ -234,11 +234,14 @@ def match_discrete_periodic_point(
 
         target_spectrum_value_lower = (1 - tremble[period_idx]) * target_spectrum_value
         target_spectrum_value_upper = (1 + tremble[period_idx]) * target_spectrum_value
-        for i in range(len(reservation_ground_motion_idx)):
+
+        temp_delete_idx = []
+        for i in range(temp_ground_motion_data.shape[0]):
             if target_spectrum_value_lower > acc[i] or target_spectrum_value_upper < acc[i]:
-                reservation_ground_motion_idx.remove(reservation_ground_motion_idx[i])
+                temp_delete_idx.append(i)
 
-            if len(reservation_ground_motion_idx) == 0:
-                break
+        reserve_ground_motion_idx = np.delete(reserve_ground_motion_idx, temp_delete_idx)
 
-    return reservation_ground_motion_idx
+        if len(reserve_ground_motion_idx) == 0:
+            break
+    return reserve_ground_motion_idx

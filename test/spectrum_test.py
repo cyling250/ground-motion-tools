@@ -3,10 +3,11 @@
 # @Author:  RichardoGu
 import unittest
 
+import h5py
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ground_motion_tools import read_from_kik
+from ground_motion_tools import read_from_kik, save_to_single
 from ground_motion_tools.process import down_sample, pga_adjust
 from ground_motion_tools.spectrum import (
     get_spectrum, SPECTRUM_PERIOD, design_spectrum_building,
@@ -43,19 +44,27 @@ class SpectrumTest(unittest.TestCase):
         # plt.show()
 
     def test_match_discrete_periodic_point_success(self):
-        gm_data_many = np.zeros((100, SpectrumTest.gm_data.shape[0]))
-        for i in range(100):
-            gm_data_many[i, :] = SpectrumTest.gm_data
-        gm_data_many = pga_adjust(gm_data_many, 0.35)
-        match_discrete_periodic_point(
-            gm_data_many,
+        data = []
+        with h5py.File("G:/KSP/ksp_all.h5") as fp:
+            name_list = list(fp["root"].keys())[:10000]
+            for name in name_list:
+                data.append(fp["root"][name][:])
+        data = np.array(data)
+        data = pga_adjust(data, 0.35)
+        idx = match_discrete_periodic_point(
+            data,
             design_spectrum_building,
             {
                 "damping_ratio": 0.05,
                 "t_g": 0.35,
                 "alpha_max": 0.08 * 9.8
             },
-            [0.6, 0.5],
-            tremble=[0.2, 0.4]
+            [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1, 1.2, 1.5, 1.6, 1.8, 2],
+            0.2
         )
-        self.assertEqual(0, 0)
+        for i in idx:
+            save_to_single(f"./data/{i}.txt", data[i])
+        spectrum_design = []
+        for i in np.arange(0, 4, 0.01):
+            spectrum_design.append(design_spectrum_building(float(i)) * 9.8)
+        np.savetxt('./data/spectrum.csv', np.array([np.arange(0, 4, 0.01), spectrum_design]).transpose(), delimiter=" ")
