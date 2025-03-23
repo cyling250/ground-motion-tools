@@ -95,16 +95,13 @@ class GMIntensityMeasures:
             A dict ``{str,np.ndarray[float]}`` of ``{im_name, im_value}``
 
         """
-        if type(im_list) == GMIMEnum:
-            pass
-        elif im_list is None or len(im_list) == 0:
-            raise TypeError("Parameter 'im_list' can not be None or empty.")
-        else:
+        if type(im_list) is GMIMEnum:
+            im_list = [im_list]
+
+        if im_list is None or len(im_list) == 0:
             raise TypeError("Parameter 'im_list' can not be None or empty.")
 
         result = {}
-        if type(im_list) is GMIMEnum:
-            im_list = [im_list]
         for im in im_list:
             im_upper = im.name.upper()
             im_lower = im.name.lower()
