@@ -120,7 +120,7 @@ def design_spectrum_building(
         *,
         damping_ratio: float = 0.05,
         t_g: float = 0.35,
-        acc_max: float = 0.08
+        acc_max: float = 0.08 * 9.8
 ) -> float:
     """
     Design Response Spectrum Functions Defined According to Seismic Codes.
@@ -160,6 +160,7 @@ def design_spectrum_building(
 
 def design_spectrum_bridge(
         period: float,
+        *,
         damping_ratio: float = 0.05,
         t_g: float = 0.35,
         c_i: float = 0.43,
@@ -227,22 +228,33 @@ def match_sort(
 
 def match_discrete_periodic_point(
         ground_motion_data: np.ndarray[float, float] | np.ndarray,
-        target_spectrum_func: callable,
-        target_spectrum_params: dict,
         periodic_point: np.ndarray[float] | list[float],
+        target_spectrum: np.ndarray[float] | list[float],
         tolerance: float | list | np.ndarray = 0.2,
         time_step: float = 0.02,
         damping_ratio: float = 0.05):
     """
-    Discrete Periodic Point Matching.
+    反应谱匹配 基于离散周期点匹配
+    Reaction Spectrum Matching Based on Discrete Periodic Point Matching.
     Args:
-        ground_motion_data: Ground Motion data. [batch_size, seq_length]
-        time_step: Time step.
-        periodic_point: Periodic point need to be calculated.
-        target_spectrum_func: Target Spectrum Calculation Function
-        target_spectrum_params: Parameters for the calculation of the target spectrum.
-        damping_ratio: Damping ratio
-        tolerance: Permitted jitter deviation from the target spectrum.
+        ground_motion_data:
+            地震动数据
+            Ground Motion data. [batch_size, seq_length]
+        time_step:
+            地震动时间步长
+            Time step.
+        periodic_point:
+            离散周期点的周期
+            Periodic point need to be calculated.
+        target_spectrum:
+            目标反应谱的值 长度和periodic_point对应
+            The value of the target response spectrum The length corresponds to the periodic_point.
+        damping_ratio:
+            阻尼比
+            Damping ratio
+        tolerance:
+            离散周期点的容许误差
+            Permitted jitter deviation from the target spectrum.
     Examples:
         >>> data = "your ndarray wave data"
         >>> idx = match_discrete_periodic_point(data,
@@ -250,7 +262,7 @@ def match_discrete_periodic_point(
         >>>    {
         >>>         "damping_ratio": 0.05,
         >>>         "t_g": 0.35,
-        >>>         "alpha_max": 0.08 * 9.8
+        >>>         "acc_max": 0.08 * 9.8
         >>>     },
         >>>     [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1, 1.2, 1.5, 1.6, 1.8, 2],
         >>>     0.3
@@ -265,8 +277,6 @@ def match_discrete_periodic_point(
 
     reserve_ground_motion_idx = np.arange(ground_motion_data.shape[0], dtype=int)
     for period_idx in range(len(periodic_point)):
-        target_spectrum_value = target_spectrum_func(period=periodic_point[period_idx], **target_spectrum_params)
-
         temp_ground_motion_data = ground_motion_data.take(reserve_ground_motion_idx, axis=0)
 
         _, _, disp = newmark_beta_single(
@@ -275,12 +285,12 @@ def match_discrete_periodic_point(
         )
         acc = np.abs(disp).max(axis=1) * (2 * np.pi / periodic_point[period_idx]) ** 2
 
-        target_spectrum_value_lower = (1 - tolerance[period_idx]) * target_spectrum_value
-        target_spectrum_value_upper = (1 + tolerance[period_idx]) * target_spectrum_value
+        target_spectrum_lower = (1 - tolerance[period_idx]) * target_spectrum[period_idx]
+        target_spectrum_upper = (1 + tolerance[period_idx]) * target_spectrum[period_idx]
 
         temp_delete_idx = []
         for i in range(temp_ground_motion_data.shape[0]):
-            if target_spectrum_value_lower > acc[i] or target_spectrum_value_upper < acc[i]:
+            if target_spectrum_lower > acc[i] or target_spectrum_upper < acc[i]:
                 temp_delete_idx.append(i)
 
         reserve_ground_motion_idx = np.delete(reserve_ground_motion_idx, temp_delete_idx)

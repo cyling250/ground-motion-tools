@@ -58,26 +58,22 @@ class SpectrumTest(unittest.TestCase):
     def test_match_discrete_periodic_point_success(self):
         data = []
         with h5py.File("G:/KSP/ksp_all.h5") as fp:
-            name_list = list(fp["root"].keys())[:100]
+            name_list = list(fp["root"].keys())[:1000]
             for name in name_list:
                 data.append(fp["root"][name][:])
         data = np.array(data)
         data = pga_adjust(data, 0.35)
+
+        period_list = np.array([0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1, 1.2, 1.5, 1.6, 1.8, 2])
+        target_spectrum = []
+        for period in period_list:
+            target_spectrum.append(design_spectrum_building(period, damping_ratio=0.05, t_g=0.35, acc_max=0.08 * 9.8))
+
         idx = match_discrete_periodic_point(
             data,
-            design_spectrum_building,
-            {
-                "damping_ratio": 0.05,
-                "t_g": 0.35,
-                "acc_max": 0.08 * 9.8
-            },
-            [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1, 1.2, 1.5, 1.6, 1.8, 2],
-            [0.2, 0.3, 0.2, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
+            period_list,
+            target_spectrum,
+            [0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
         )
+        print(idx)
         self.assertEqual(0, 0)
-        # for i in idx:
-        #     save_to_single(f"./data/{i}.txt", data[i])
-        # spectrum_design = []
-        # for i in np.arange(0, 4, 0.01):
-        #     spectrum_design.append(design_spectrum_building(float(i)) * 9.8)
-        # np.savetxt('./data/spectrum.csv', np.array([np.arange(0, 4, 0.01), spectrum_design]).transpose(), delimiter=" ")
