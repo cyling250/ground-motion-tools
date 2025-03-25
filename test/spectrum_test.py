@@ -11,7 +11,7 @@ from ground_motion_tools import read_from_kik, save_to_single
 from ground_motion_tools.process import down_sample, pga_adjust
 from ground_motion_tools.spectrum import (
     get_spectrum, SPECTRUM_PERIOD, design_spectrum_building,
-    match_discrete_periodic_point
+    match_discrete_periodic_point, design_spectrum_bridge
 )
 
 
@@ -46,6 +46,15 @@ class SpectrumTest(unittest.TestCase):
         # plt.plot(design_spectrum)
         # plt.show()
 
+    def test_design_spectrum_bridge_success(self):
+        design_spectrum = []
+        for ts in np.arange(0, 6, 0.01):
+            design_spectrum.append(design_spectrum_bridge(float(ts), damping_ratio=0.05))
+        design_spectrum = np.array(design_spectrum)
+        self.assertEqual(design_spectrum.shape[0], len(np.arange(0, 6, 0.01)))
+        # plt.plot(design_spectrum)
+        # plt.show()
+
     def test_match_discrete_periodic_point_success(self):
         data = []
         with h5py.File("G:/KSP/ksp_all.h5") as fp:
@@ -60,7 +69,7 @@ class SpectrumTest(unittest.TestCase):
             {
                 "damping_ratio": 0.05,
                 "t_g": 0.35,
-                "alpha_max": 0.08 * 9.8
+                "acc_max": 0.08 * 9.8
             },
             [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1, 1.2, 1.5, 1.6, 1.8, 2],
             [0.2, 0.3, 0.2, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]

@@ -120,7 +120,7 @@ def design_spectrum_building(
         *,
         damping_ratio: float = 0.05,
         t_g: float = 0.35,
-        alpha_max: float = 0.08
+        acc_max: float = 0.08
 ) -> float:
     """
     Design Response Spectrum Functions Defined According to Seismic Codes.
@@ -129,9 +129,9 @@ def design_spectrum_building(
         period: Structural period
         damping_ratio: Structural damping ratio
         t_g: Characteristic period
-        alpha_max: Maximum seismic impact factor
+        acc_max: Maximum spectrum value of accelerate
 
-    Returns: Seismic impact factor
+    Returns: Spectrum value of acceleration.
 
     """
     if 0 > period:
@@ -149,34 +149,65 @@ def design_spectrum_building(
         nita2 = 0.55
 
     if period < 0.1:  # 上升段
-        return (0.45 + 5.5 * period) * nita2 * alpha_max
+        return (0.45 + 5.5 * period) * nita2 * acc_max
     elif period < t_g:  # 水平段
-        return nita2 * alpha_max
+        return nita2 * acc_max
     elif period < 5 * t_g:  # 下降段
-        return (t_g / period) ** gamma * nita2 * alpha_max
+        return (t_g / period) ** gamma * nita2 * acc_max
     else:  # 倾斜段
-        return (0.2 ** gamma - nita1 / nita2 * (period - 5 * t_g)) * alpha_max * nita2
+        return (0.2 ** gamma - nita1 / nita2 * (period - 5 * t_g)) * acc_max * nita2
 
 
 def design_spectrum_bridge(
         period: float,
         damping_ratio: float = 0.05,
         t_g: float = 0.35,
-        alpha_max: float = 0.08
+        c_i: float = 0.43,
+        c_s: float = 1,
+        acc_max: float = 0.35
 ) -> float:
     """
-    Design Response Spectrum Functions Defined According to Seismic Codes.
+    依据《公路桥梁抗震设计规范》JTG/T  2231-01——2020(下称 桥梁抗规)所规定的桥梁地震设计反应谱
+
+    According to the seismic design code for highway bridges JTG/T 2231-01--2020,
+    (hereinafter referred to as the code)
+    the seismic design response spectrum of the bridge is as follows.
 
     Args:
-        period: Structural period
-        damping_ratio: Structural damping ratio
-        t_g: Characteristic period
-        alpha_max: Maximum seismic impact factor
+        acc_max:
+        水平向基本地震动峰值加速度 按照《桥梁抗规》表3.2.2取值
+        Horizontal peak acceleration of basic ground vibration According to Table 3.2.2 of the Code.
+        c_s:
+        场地系数 按照《桥梁抗规》表5.2.2取值
+        Site factor Taken from Table 5.2.2 of the Code.
+        c_i:
+        抗震重要性系数 按照《桥梁抗规》表3.1.3-2取值
+        Seismic Importance Coefficient According to Table 3.1.3-2 of the Code.
+        period: 结构周期 Structural period
+        damping_ratio: 结构阻尼比 Structural damping ratio
+        t_g: 场地特征周期 Site Characteristic period
 
-    Returns: Seismic impact factor
+    Returns: Spectrum value of acceleration.
 
     """
-    pass
+    if t_g < 0 or t_g > 10:
+        raise ValueError("Parameter 't_g' can not letter than -0 or bigger than 10.")
+
+    # 计算阻尼调整系数 Calculate the damping adjustment factor
+    c_d = 1 + (0.05 - damping_ratio) / (0.08 + 1.6 * damping_ratio)
+    c_d = c_d if c_d >= 0.55 else 0.55
+    # S_max
+    s_max = 2.5 * c_i * c_s * c_d * acc_max
+
+    # 上升段 upward trend
+    if period < 0.1:
+        return s_max * (0.6 * period / 0.1 + 0.4)
+    elif 0.1 <= period <= t_g:
+        return s_max
+    elif t_g < period <= 10:
+        return s_max * (t_g / period)
+    else:
+        raise RuntimeError("Parameter 'period' must be in the interval (0, inf)")
 
 
 def match_sort(

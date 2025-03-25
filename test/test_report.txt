@@ -9,11 +9,12 @@ test_fourier_success (process_test.ProcessTest.test_fourier_success) ... ok
 test_gm_data_fill_success (process_test.ProcessTest.test_gm_data_fill_success) ... ok
 test_length_normalize_success (process_test.ProcessTest.test_length_normalize_success) ... ok
 test_pga_adjust_success (process_test.ProcessTest.test_pga_adjust_success) ... ok
+test_design_spectrum_bridge_success (spectrum_test.SpectrumTest.test_design_spectrum_bridge_success) ... ok
 test_design_spectrum_building_success (spectrum_test.SpectrumTest.test_design_spectrum_building_success) ... ok
 test_get_spectrum_success (spectrum_test.SpectrumTest.test_get_spectrum_success) ... ok
 test_match_discrete_periodic_point_success (spectrum_test.SpectrumTest.test_match_discrete_periodic_point_success) ... ok
 
 ----------------------------------------------------------------------
-Ran 14 tests in 68.222s
+Ran 15 tests in 30.103s
 
 OK
