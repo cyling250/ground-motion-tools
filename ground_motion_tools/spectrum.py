@@ -256,18 +256,19 @@ def match_discrete_periodic_point(
             离散周期点的容许误差
             Permitted jitter deviation from the target spectrum.
     Examples:
-        >>> data = "your ndarray wave data"
-        >>> idx = match_discrete_periodic_point(data,
-        >>>    design_spectrum_building,
-        >>>    {
-        >>>         "damping_ratio": 0.05,
-        >>>         "t_g": 0.35,
-        >>>         "acc_max": 0.08 * 9.8
-        >>>     },
-        >>>     [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1, 1.2, 1.5, 1.6, 1.8, 2],
-        >>>     0.3
+        >>> data = np.array([[1,2,3],[4,5,6]]) # 地震波数据 ground motion data
+        >>> period_list = np.array([0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1, 1.2, 1.5, 1.6, 1.8, 2])
+        >>> target_spectrum = []
+        >>> for period in period_list:
+        >>>     target_spectrum.append(design_spectrum_building(period, damping_ratio=0.05, t_g=0.35, acc_max=0.08 * 9.8))
+        >>> idx = match_discrete_periodic_point(
+        >>>     data,
+        >>>     period_list,
+        >>>     target_spectrum,
+        >>>     [0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
         >>> )
-    Returns: Array of matched seismic wave numbers.
+    Returns:
+        Array of matched seismic wave numbers.
     """
     if type(tolerance) == float:
         tolerance = np.array([tolerance for i in range(len(periodic_point))])
