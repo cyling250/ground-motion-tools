@@ -4,26 +4,26 @@
 """
 Some utils for processing ground motion.
 """
+
+from typing import Tuple
 import numpy as np
 from scipy import signal
 from .enums import GMDataEnum
 
 
-def gm_data_fill(gm_data: np.ndarray,
-                 time_step: float = 0.02,
-                 wave_type: GMDataEnum = GMDataEnum.ACC) -> (
-        np.ndarray[np.float64], np.ndarray[np.float64], np.ndarray[np.float64]
-):
+def gm_data_fill(
+    gm_data: np.ndarray, time_step: float = 0.02, wave_type: GMDataEnum = GMDataEnum.ACC
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     Fit wave by input.
-
     Args:
-        gm_data:
-        wave_type:
-        time_step:
-
+        gm_data: Ground motion data.
+        time_step: Time step.
+        wave_type: Wave type.
     Returns:
-        None
+        acc: Acceleration of the ground motion.
+        vel: Velocity of the ground motion.
+        disp: Displacement of the ground motion.
     """
     if gm_data.ndim == 1:
         # All the wave_array hereafter should have 2 dims as [batch_size, seq_len]
@@ -45,9 +45,9 @@ def gm_data_fill(gm_data: np.ndarray,
     return np.squeeze(acc), np.squeeze(vel), np.squeeze(disp)
 
 
-def fourier(gm_data: np.ndarray, time_step: float) -> (
-        np.ndarray, np.ndarray, np.ndarray
-):
+def fourier(
+    gm_data: np.ndarray, time_step: float
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     Calculate the fourier spectrum of wave.
     Args:
@@ -56,24 +56,27 @@ def fourier(gm_data: np.ndarray, time_step: float) -> (
 
     Returns:
         x-axis of fourier spectrum(HZ)
-        amp: A
-
+        amp: Amplitude of the fourier spectrum.
+        amp**2: Square of the amplitude of the fourier spectrum.
     """
-    x_fourier = np.abs(np.fft.fftfreq(d=time_step, n=len(gm_data))[len(gm_data) // 2:])[::-1]
+    x_fourier = np.abs(
+        np.fft.fftfreq(d=time_step, n=len(gm_data))[len(gm_data) // 2 :]
+    )[::-1]
     # Take the absolute value of the complex number, i.e., the mode of the complex number (bilateral spectrum)
     amp = np.abs(np.fft.fft(gm_data)) / len(gm_data)
     # extract a unilateral spectrum
-    amp = (amp[len(gm_data) // 2:])[::-1]
-    return x_fourier, amp, amp ** 2
+    amp = (amp[len(gm_data) // 2 :])[::-1]
+    return x_fourier, amp, amp**2
 
 
 def butter_worth_filter(
-        gm_data: np.ndarray[np.float64],
-        time_step: float,
-        order: int = 4,
-        start_freq: float = 0.1,
-        end_freq: float = 15,
-        pass_way: str = 'band'):
+    gm_data: np.ndarray[np.float64],
+    time_step: float,
+    order: int = 4,
+    start_freq: float = 0.1,
+    end_freq: float = 15,
+    pass_way: str = "band",
+) -> np.ndarray:
     """
 
     The start frequency and stop frequency are suggested as 0.1HZ and 25HZ.
@@ -90,12 +93,16 @@ def butter_worth_filter(
     Returns: Filtered waves.
 
     """
-    b, a = signal.butter(order, [2 * start_freq * time_step, 2 * end_freq * time_step], pass_way)
+    b, a = signal.butter(
+        order, [2 * start_freq * time_step, 2 * end_freq * time_step], pass_way
+    )
     # ! Result by using ``lfilter`` is sample to Seismic Signal, not filtfilt
     return signal.lfilter(b, a, gm_data)
 
 
-def down_sample(gm_data: np.ndarray, ori_time_step: float, tar_time_step: float) -> np.ndarray:
+def down_sample(
+    gm_data: np.ndarray, ori_time_step: float, tar_time_step: float
+) -> np.ndarray:
     """
     Down-sample the wave data.
 
@@ -103,11 +110,11 @@ def down_sample(gm_data: np.ndarray, ori_time_step: float, tar_time_step: float)
     Use mean down-samping method can let the calculated displacement and velocity be the same as before.
 
     Args:
-        gm_data: The input wave data.
+        gm_data: Ground motion data.
         ori_time_step: Origin time step.
         tar_time_step: Target time step.
     Returns:
-        Downsized wave_data. Using scipy.signal.resample
+        Downsized ground motion data. Using scipy.signal.resample
     """
 
     # The two lines that are commented out are the previous methods.
@@ -120,54 +127,48 @@ def down_sample(gm_data: np.ndarray, ori_time_step: float, tar_time_step: float)
 
 def length_normalize(gm_data: np.ndarray[np.float64], normal_length: int):
     """
-    Seismic wave length normalisation method.
-
-    Normalisation algorithm:
-        1. If the original seismic wave length l1 is less than the normalised seismic wave length ln,
-            then zero is added directly at the end.
-        2. If the original seismic wave length l1 is greater than the seismic wave length ln to be normalised,
-            the following operation is performed.
-            2.1 Extraction of ground shaking PGA occurrences i1
-            2.2 Calculate the ratio a(0<a<1) of the original length to the normalised length,
-                then the original ground shaking should be extracted int(i1*a) units, before the peak appears.
-                When the peak appears, it is dealt with directly by the truncation and zero filling method.
+    Length normalize the ground motion data.
     Args:
         gm_data: Ground motion data.
-        normal_length: 要归一化的长度
-
+        normal_length: Normalized length.
     Returns:
-
+        Normalized ground motion data.
     """
     # 1 The normalised length is greater than the original length
     if gm_data.shape[0] <= normal_length:
         return np.pad(
             gm_data,
             (0, normal_length - gm_data.shape[0]),
-            'constant',
-            constant_values=(0, 0)
+            "constant",
+            constant_values=(0, 0),
         )
     # 2 The normalised length is less than the original length
     else:
         cut_rate = normal_length / gm_data.shape[0]
         pga_loca = np.argmax(np.abs(gm_data))
         forward_length = int(pga_loca * cut_rate)
-        res = gm_data[pga_loca - forward_length:normal_length - forward_length + pga_loca]
+        res = gm_data[
+            pga_loca - forward_length : normal_length - forward_length + pga_loca
+        ]
         return res
 
 
-def pga_adjust(ground_motion_data: np.ndarray, target_pga):
+def pga_adjust(ground_motion_data: np.ndarray, target_pga: float):
     """
-    按照目标PGA对目标地震波进行调幅。
+    Adjust the ground motion data by target PGA.
     Args:
-        ground_motion_data: 地震波
-        target_pga: 目标地震波PGA
-
+        ground_motion_data: Ground motion data.
+        target_pga: Target PGA.
     Returns:
-
+        Adjusted ground motion data.
     """
     if ground_motion_data.ndim == 1:
         return ground_motion_data * target_pga / np.abs(ground_motion_data).max()
     elif ground_motion_data.ndim == 2:
-        return ground_motion_data / np.abs(ground_motion_data).max(axis=1).reshape(-1, 1) * target_pga
+        return (
+            ground_motion_data
+            / np.abs(ground_motion_data).max(axis=1).reshape(-1, 1)
+            * target_pga
+        )
     else:
         raise ValueError("ndim of parameter 'ground_motion_data' must be 1 or 2.")

@@ -1,20 +1,65 @@
-test_get_im_success (im_test.GMIMTest.test_get_im_success) ... ok
-test_read_from_kik_success (io_test.GroundMotionTest.test_read_from_kik_success) ... ok
-test_read_from_peer_success (io_test.GroundMotionTest.test_read_from_peer_success) ... ok
-test_read_from_single_success (io_test.GroundMotionTest.test_read_from_single_success) ... ok
-test_save_to_single_success (io_test.GroundMotionTest.test_save_to_single_success) ... ok
-test_butter_worth_bandpath_filter_success (process_test.ProcessTest.test_butter_worth_bandpath_filter_success) ... ok
-test_downsample_success (process_test.ProcessTest.test_downsample_success) ... ok
-test_fourier_success (process_test.ProcessTest.test_fourier_success) ... ok
-test_gm_data_fill_success (process_test.ProcessTest.test_gm_data_fill_success) ... ok
-test_length_normalize_success (process_test.ProcessTest.test_length_normalize_success) ... ok
-test_pga_adjust_success (process_test.ProcessTest.test_pga_adjust_success) ... ok
-test_design_spectrum_bridge_success (spectrum_test.SpectrumTest.test_design_spectrum_bridge_success) ... ok
-test_design_spectrum_building_success (spectrum_test.SpectrumTest.test_design_spectrum_building_success) ... ok
-test_get_spectrum_success (spectrum_test.SpectrumTest.test_get_spectrum_success) ... ok
-test_match_discrete_periodic_point_success (spectrum_test.SpectrumTest.test_match_discrete_periodic_point_success) ... ok
+im_test (unittest.loader._FailedTest) ... ERROR
+io_test (unittest.loader._FailedTest) ... ERROR
+process_test (unittest.loader._FailedTest) ... ERROR
+spectrum_test (unittest.loader._FailedTest) ... ERROR
+
+======================================================================
+ERROR: im_test (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: im_test
+Traceback (most recent call last):
+  File "C:\Users\RichardoGu\AppData\Roaming\uv\python\cpython-3.10-windows-x86_64-none\lib\unittest\loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "C:\Users\RichardoGu\AppData\Roaming\uv\python\cpython-3.10-windows-x86_64-none\lib\unittest\loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "E:\ground-motion-tools\test\im_test.py", line 6, in <module>
+    from ground_motion_tools.enums import GMIMEnum
+ModuleNotFoundError: No module named 'ground_motion_tools'
+
+
+======================================================================
+ERROR: io_test (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: io_test
+Traceback (most recent call last):
+  File "C:\Users\RichardoGu\AppData\Roaming\uv\python\cpython-3.10-windows-x86_64-none\lib\unittest\loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "C:\Users\RichardoGu\AppData\Roaming\uv\python\cpython-3.10-windows-x86_64-none\lib\unittest\loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "E:\ground-motion-tools\test\io_test.py", line 6, in <module>
+    from ground_motion_tools import (
+ModuleNotFoundError: No module named 'ground_motion_tools'
+
+
+======================================================================
+ERROR: process_test (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: process_test
+Traceback (most recent call last):
+  File "C:\Users\RichardoGu\AppData\Roaming\uv\python\cpython-3.10-windows-x86_64-none\lib\unittest\loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "C:\Users\RichardoGu\AppData\Roaming\uv\python\cpython-3.10-windows-x86_64-none\lib\unittest\loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "E:\ground-motion-tools\test\process_test.py", line 6, in <module>
+    from ground_motion_tools import read_from_kik
+ModuleNotFoundError: No module named 'ground_motion_tools'
+
+
+======================================================================
+ERROR: spectrum_test (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: spectrum_test
+Traceback (most recent call last):
+  File "C:\Users\RichardoGu\AppData\Roaming\uv\python\cpython-3.10-windows-x86_64-none\lib\unittest\loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "C:\Users\RichardoGu\AppData\Roaming\uv\python\cpython-3.10-windows-x86_64-none\lib\unittest\loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "E:\ground-motion-tools\test\spectrum_test.py", line 8, in <module>
+    from ground_motion_tools import read_from_kik
+ModuleNotFoundError: No module named 'ground_motion_tools'
+
 
 ----------------------------------------------------------------------
-Ran 15 tests in 30.733s
+Ran 4 tests in 0.000s
 
-OK
+FAILED (errors=4)

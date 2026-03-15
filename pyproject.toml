@@ -1,19 +1,13 @@
 [project]
 name = "ground-motion-tools"
-version = "0.2.7"
-description = ""
-authors = [
-    { name = "RichardoGu", email = "xiaopenggu@qq.com" }
-]
-license = { text = "MIT" }
+version = "0.3.0"
+description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "numpy (>=2.2.4,<3.0.0)",
-    "scipy (>=1.15.2,<2.0.0)",
+    "numpy>=2.2.6",
+    "scipy>=1.15.3",
 ]
-
-
-[build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+[[tool.uv.index]]
+url="https://repo.huaweicloud.com/repository/pypi/simple/"
+default=true
