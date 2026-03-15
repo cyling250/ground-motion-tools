@@ -1,13 +1,50 @@
 [project]
 name = "ground-motion-tools"
 version = "0.3.0"
-description = "Add your description here"
+description = "A comprehensive Python library for processing and analyzing ground motion data, including seismic wave reading/writing, signal processing, response spectrum calculation, and intensity measure computation."
 readme = "README.md"
 requires-python = ">=3.10"
+authors = [
+    {name = "XiaopengGu", email = "xiaopenggu@.com"},
+]
+maintainers = [
+    {name = "XiaopengGu", email = "xiaopenggu@.com"},
+]
+keywords = [
+    "seismic",
+    "ground-motion",
+    "earthquake",
+    "signal-processing",
+    "response-spectrum",
+    "intensity-measures",
+    "seismic-analysis",
+    "geophysics",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Education",
+    "Intended Audience :: Developers",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Seismology",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: OS Independent",
+]
 dependencies = [
     "numpy>=2.2.6",
     "scipy>=1.15.3",
 ]
+[project.urls]
+Repository = "https://github.com/cyling250/ground-motion-tools"
+Documentation = "https://github.com/cyling250/ground-motion-tools#readme"
+"Bug Reports" = "https://github.com/cyling250/ground-motion-tools/issues"
+
 [[tool.uv.index]]
 url="https://repo.huaweicloud.com/repository/pypi/simple/"
 default=true

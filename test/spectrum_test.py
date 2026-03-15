@@ -3,7 +3,6 @@
 # @Author:  RichardoGu
 import time
 import unittest
-import matplotlib.pyplot as plt
 import numpy as np
 from ground_motion_tools import read_from_kik
 from ground_motion_tools.process import down_sample, pga_adjust
