@@ -12,32 +12,9 @@ A comprehensive Python library for processing and analyzing ground motion data, 
 - **Signal Processing**: Fourier spectrum analysis, Butterworth filtering, down-sampling, normalization
 - **Response Spectrum**: Calculate acceleration, velocity, and displacement response spectra
 - **Intensity Measures**: Compute various ground motion intensity measures (PGA, PGV, PGD, ASI, HI, VSI)
+- **Visualization**: Professional ground motion and spectrum visualization with customizable styling
 - **Batch Processing**: Efficient batch calculations for large datasets
 - **Performance Optimized**: Built with NumPy and SciPy for high-performance computations
-
-## Table of Contents
-
-- [Ground Motion Tools](#ground-motion-tools)
-  - [Features](#features)
-  - [Table of Contents](#table-of-contents)
-  - [Installation](#installation)
-  - [Requirements](#requirements)
-  - [Quick Start](#quick-start)
-  - [Usage Examples](#usage-examples)
-    - [Reading Ground Motion Data](#reading-ground-motion-data)
-    - [Writing Ground Motion Data](#writing-ground-motion-data)
-    - [Signal Processing](#signal-processing)
-    - [Response Spectrum Calculation](#response-spectrum-calculation)
-    - [Intensity Measures](#intensity-measures)
-  - [API Reference](#api-reference)
-    - [Core Functions](#core-functions)
-    - [Signal Processing](#signal-processing-1)
-    - [Spectrum Analysis](#spectrum-analysis)
-    - [Intensity Measures](#intensity-measures-1)
-    - [Enumerations](#enumerations)
-  - [Contributing](#contributing)
-  - [License](#license)
-  - [Support](#support)
 
 ## Installation
 
@@ -167,6 +144,57 @@ for i in range(100):
 acc_spectrum, vel_spectrum, disp_spectrum, periods, damping = get_spectrum(gm_data_many, time_step)
 ```
 
+### Visualization
+
+```python
+from ground_motion_tools import *
+import numpy as np
+
+# Read ground motion data
+gm_data, time_step = read_from_kik("path/to/your/acceleration/data.kik")
+
+# Visualize ground motion data
+show_gm(
+    gm_data, 
+    time_step, 
+    title="Ground Motion Acceleration",
+    y_label="Acceleration (g)",
+    save_path="ground_motion_plot.png"
+)
+
+# Visualize multiple ground motion components
+gm_data_2d = np.column_stack([gm_data, gm_data * 0.8, gm_data * 0.6])
+component_names = ["Component 1", "Component 2", "Component 3"]
+show_gm(
+    gm_data_2d,
+    time_step,
+    title="Multiple Ground Motion Components",
+    y_label="Acceleration (g)",
+    component_names=component_names,
+    save_path="multiple_components_plot.png"
+)
+
+# Calculate and visualize response spectrum
+spectrum_data, _, _, _, _ = get_spectrum(gm_data, time_step)
+show_gm_spectrum(
+    spectrum_data,
+    title="Response Spectrum",
+    y_label="Spectral Acceleration (g)",
+    save_path="response_spectrum_plot.png"
+)
+
+# Visualize multiple response spectra
+spectrum_data_2d = np.column_stack([spectrum_data, spectrum_data * 0.8])
+component_names = ["Damping 5%", "Damping 10%"]
+show_gm_spectrum(
+    spectrum_data_2d,
+    title="Multiple Response Spectra",
+    y_label="Spectral Acceleration (g)",
+    component_names=component_names,
+    save_path="multiple_spectra_plot.png"
+)
+```
+
 ### Intensity Measures
 
 ```python
@@ -219,6 +247,11 @@ comprehensive_im_batch = im_calculator_batch.get_im(IM_WITHOUT_SPECTRUM + IM_SPE
 ### Spectrum Analysis
 
 - `get_spectrum(gm_data, time_step)`: Calculate response spectra
+
+### Visualization
+
+- `show_gm(gm_data, time_step, save_path, y_label, show_plot, component_names, title)`: Visualize ground motion data
+- `show_gm_spectrum(spectrum_data, save_path, y_label, show_plot, component_names, title)`: Visualize response spectrum data
 
 ### Intensity Measures
 

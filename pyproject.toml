@@ -1,6 +1,6 @@
 [project]
 name = "ground-motion-tools"
-version = "0.3.0"
+version = "0.3.1"
 description = "A comprehensive Python library for processing and analyzing ground motion data, including seismic wave reading/writing, signal processing, response spectrum calculation, and intensity measure computation."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -22,6 +22,7 @@ keywords = [
 ]
 
 dependencies = [
+    "matplotlib>=3.10.8",
     "numpy>=2.2.6",
     "scipy>=1.15.3",
 ]
